@@ -13,12 +13,18 @@ public class Main {
         ArrayList<String> resultList = new ArrayList<String>();
         listAllFilesRecursively(root, resultList);
 
+        long totalSize = 0L;
+
         Pattern pattern = Pattern.compile(args[1]);
         for (String path : resultList) {
             if (!pattern.matcher(path).matches()) {
+                File file = new File(path);
+                if (file.isFile()) totalSize += file.length();
                 System.out.println(path);
             }
         }
+
+        System.out.printf("# Total size: %d\n", totalSize);
     }
 
     private static void printUsage() {
