@@ -9,22 +9,26 @@ public class Main {
         }
         File root = new File(args[0]);
         PathFilter pathFilter = new PathFilter(args[1]);
-        listAllFilesRecursively(root, pathFilter);
+        ResultHandler resultHandler = new ResultHandler();
+        processAllFilesRecursively(root, pathFilter, resultHandler);
 
-        System.out.printf("# Total size: %d\n", pathFilter.getTotalSize());
+        System.out.printf("# Total count: %d\n", resultHandler.getCount());
+        System.out.printf("# Total size:  %d\n", resultHandler.getTotalSize());
     }
 
     private static void printUsage() {
         System.out.print("java Main <path_to_scan> <regex_to_scan>");
     }
 
-    private static void listAllFilesRecursively(File file, PathFilter pathFilter) {
-        pathFilter.filterAndHandle(file);
+    private static void processAllFilesRecursively(File file, PathFilter pathFilter, ResultHandler resultHandler) {
+        if (pathFilter.permit(file)) {
+            resultHandler.handle(file);
+        }
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             if (files == null) return;
             for (File f : files) {
-                listAllFilesRecursively(f, pathFilter);
+                processAllFilesRecursively(f, pathFilter, resultHandler);
             }
         }
     }

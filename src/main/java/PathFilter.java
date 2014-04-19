@@ -2,22 +2,14 @@ import java.io.File;
 import java.util.regex.Pattern;
 
 public class PathFilter {
-    private long totalSize = 0L;
-    private final Pattern pattern;
+    private final Pattern exclusionPattern;
 
-    public PathFilter(String regex) {
-        pattern = Pattern.compile(regex);
+    public PathFilter(String exclusionRegex) {
+        exclusionPattern = Pattern.compile(exclusionRegex);
     }
 
-    public long getTotalSize() {
-        return totalSize;
-    }
-
-    public void filterAndHandle(File file) {
+    public boolean permit(File file) {
         String path = file.getAbsolutePath();
-        if (!pattern.matcher(path).matches()) {
-            if (file.isFile()) totalSize += file.length();
-            System.out.println(path);
-        }
+         return !exclusionPattern.matcher(path).matches();
     }
 }
